@@ -7,15 +7,15 @@ export default function ReferralTab({ user }) {
   const { data, isFetching, isError, error } = useFetchReferrals(user?.id);
   const points = localStorage.getItem("points");
 
-  const referralLink = `https://t.me/Bibiapp_bot/app?startapp=${user?.id}`;
+  const referralLink = `https://t.me/Snoocoin_bot/app?startapp=${user?.id}`;
   const shareText = `
-    🐾 Meet Bibi, the smallest cat on Solana! 🐾
+    🌟 Dive into the world of SnooCoin! 🌟
 
-    Join us now and be among the early users to earn exclusive rewards. 🌟
+    🚀 Hold, relax, and let the profits roll in while Snoo takes you to the moon! 🌙
 
-    Both you and I will get 1000 points when you join through this link! 🎉
+    Join through my link, and we’ll both earn exclusive rewards! 🎉
 
-    Dive into the world of Bibi and unlock amazing bonuses. Don’t miss out on this unique opportunity! 🚀
+    🐾 Check it out here: ${referralLink}
   `;
   const telegramShareURL = `https://t.me/share/url?url=${encodeURIComponent(
     referralLink
@@ -58,16 +58,16 @@ export default function ReferralTab({ user }) {
         </div>
       </div>
 
-      {/* Coineal logo */}
+      {/* SnooCoin logo */}
       <div className='w-fit mx-auto my-5'>
-        <Image src='/cats.png' height={200} width={200} alt='cats' />
+        <Image src='/snoo.png' height={200} width={200} alt='SnooCoin' />
       </div>
 
       {/* Invite action */}
       <div className='my-5 w-11/12 mx-auto'>
         <div className='text-3xl font-bold text-center'>Invite Friends!!!</div>
         <div className='text-xl font-semibold text-center'>
-          Get bonuses with your friends
+          Earn rewards and chill with Snoo
         </div>
         <div className='flex items-center mt-5'>
           <div className='w-20'>
@@ -76,8 +76,8 @@ export default function ReferralTab({ user }) {
           <div className='ml-3'>
             <div className='flex items-center mt-1'>
               <p>
-                <span className='text-yellow-300'>+10,000 BB</span> for you and
-                your friend when you invite 10 active users
+                <span className='text-yellow-300'>+10,000 SnooPoints</span> for
+                you and your friend when you invite 10 active users
               </p>
             </div>
           </div>
