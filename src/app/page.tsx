@@ -96,7 +96,7 @@ const Home: React.FC = () => {
       case "wallet":
         return <WalletPage user={user} />;
       case "investor":
-        return <InvestorTab user={user} />;
+        return <InvestorTab />;
       default:
         return null;
     }

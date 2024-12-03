@@ -56,7 +56,8 @@ export default function OGTeaser() {
           <span className="block text-sm mt-1 text-yellow-300">Earn exclusive rewards as an early believer.</span>
         </motion.div>
         <p className="mt-4 text-gray-400">
-          Don't just buy a token—invest in a future where your vision grows with ours.
+        Don&apos;t just buy a token—invest in a future where your vision grows with ours.
+
         </p>
       </div>
 

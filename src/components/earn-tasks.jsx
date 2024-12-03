@@ -56,7 +56,7 @@ const tasks = [
         <Image src="/telegram.svg" alt="telegram" width={100} height={100} priority />
       </div>
     ),
-    url: "t.me/scoocoins",
+    url: "t.me/snoocoins",
     customAction: true,
   },
   {
@@ -216,7 +216,7 @@ export default function EarnTasks() {
           <Image width={100} height={100} src="/tasks.svg" alt="task icon" />
         </div>
         <div className="flex flex-col items-center gap-2.5 w-2/5">
-                  <p>Tasks: 0/5</p>
+          <p>Tasks: 0/5</p>
           <LinearProgress className="w-full" />
         </div>
         <div className="w-16 flex justify-end">
@@ -226,7 +226,7 @@ export default function EarnTasks() {
           </div>
         </div>
       </div>
-
+  
       {/* Task Type Buttons */}
       <div className="flex gap-3 mb-5">
         {earnType.map((item) => (
@@ -242,7 +242,7 @@ export default function EarnTasks() {
           </button>
         ))}
       </div>
-
+  
       {/* Task List */}
       <div className="space-y-3">
         {filteredTasks.map((task) => (
@@ -255,21 +255,19 @@ export default function EarnTasks() {
               </div>
             </div>
             <button
-            onClick={() => handleSocialTask(task)}
-            className="px-4 py-2 bg-blue-500 text-white rounded-full"
-            disabled={socialTasksCompleted[task.id]}
-          >
-            {socialTasksCompleted[task.id] ? "Completed" : "Complete"}
-          </button>
-
-
+              onClick={() => handleSocialTask(task)}
+              className="px-4 py-2 bg-blue-500 text-white rounded-full"
+              disabled={socialTasksCompleted[task.id]}
+            >
+              {socialTasksCompleted[task.id] ? "Completed" : "Complete"}
+            </button>
           </div>
         ))}
       </div>
-
+  
       {/* Daily Claim Button */}
       <div className="mt-5 text-center">
-        <handleSocialTask
+        <button
           onClick={handleDailyClaim}
           className="px-6 py-3 bg-green-500 text-white rounded-full"
           disabled={lastClaimed && new Date().getTime() - new Date(lastClaimed).getTime() < 86400000}
@@ -277,7 +275,7 @@ export default function EarnTasks() {
           {lastClaimed ? "Claim Again in 24 Hours" : "Claim Daily Reward"}
         </button>
       </div>
-
+  
       {reward && (
         <div className="fixed bottom-5 left-1/2 transform -translate-x-1/2 py-2 px-6 bg-green-600 text-white rounded-lg">
           Reward Claimed!
@@ -285,4 +283,5 @@ export default function EarnTasks() {
       )}
     </div>
   );
+  
 }
