@@ -1,0 +1,7 @@
+
+
+
+body {
+  background: var(--tg-theme-secondary-bg-color, white);
+}
+/* global.css or _assets/globals.css */
