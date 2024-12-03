@@ -29,7 +29,7 @@ const earnType = [
   },
   {
     id: "campaign",
-    text: "Campaign",
+    text: "partners",
     Icon: () => (
       <div className='w-7'>
         <Image
@@ -48,17 +48,11 @@ const tasks = [
   {
     type: "social",
     id: "telegramJoin",
-    text: "Join Bibi Telegram Channel",
+    text: "join group",
     coin: "+300",
     Icon: () => (
-      <div className='w-7'>
-        <Image
-          src='/telegram.svg'
-          alt='woman'
-          width={100}
-          height={100}
-          priority
-        />
+      <div className="w-7">
+        <Image src="/telegram.svg" alt="telegram" width={100} height={100} priority />
       </div>
     ),
     url: "t.me/bibi_anoucement",
@@ -67,14 +61,26 @@ const tasks = [
   {
     type: "social",
     id: "XFollow",
-    text: "Follow Bibi on X",
+    text: "follow Snoocoin",
     coin: "+100",
     Icon: () => (
-      <div className='w-7'>
-        <Image src='/x.png' alt='woman' width={100} height={100} priority />
+      <div className="w-7">
+        <Image src="/x.png" alt="x" width={100} height={100} priority />
       </div>
     ),
     url: "https://x.com/bi_bi_solana?s=21",
+  },
+  {
+    type: "social",
+    id: "XLikeRetweet",
+    text: "Like and Retweet Pinned Post",
+    coin: "+150",
+    Icon: () => (
+      <div className="w-7">
+        <Image src="/x.png" alt="retweet" width={100} height={100} priority />
+      </div>
+    ),
+    url: "https://x.com/bi_bi_solana/status/123456789", // Replace with your pinned post URL
   },
   {
     type: "campaign",
@@ -82,14 +88,8 @@ const tasks = [
     text: "Follow The Media Motivator",
     coin: "+200",
     Icon: () => (
-      <div className='w-7'>
-        <Image
-          src='/youtube.svg'
-          alt='woman'
-          width={100}
-          height={100}
-          priority
-        />
+      <div className="w-7">
+        <Image src="/youtube.svg" alt="youtube" width={100} height={100} priority />
       </div>
     ),
     url: "https://youtube.com/@thegreatthinker?si=P4Uhr7jhwcqMRNyP",
@@ -100,19 +100,14 @@ const tasks = [
     text: "Join NOT-A-GAME community",
     coin: "+100",
     Icon: () => (
-      <div className='w-7'>
-        <Image
-          src='/telegram.svg'
-          alt='woman'
-          width={100}
-          height={100}
-          priority
-        />
+      <div className="w-7">
+        <Image src="/telegram.svg" alt="telegram" width={100} height={100} priority />
       </div>
     ),
     url: "https://t.me/notgamescommunity",
   },
 ];
+
 
 export default function EarnTasks() {
   const [taskType, setTaskType] = useState("social");
@@ -138,22 +133,25 @@ export default function EarnTasks() {
 
   const handleSocialTask = (task) => {
     setIsLoading((prevLoading) => ({ ...prevLoading, [task.id]: true }));
-
+  
     if (task.customAction) {
       if (task.id === "telegramJoin") {
         checkTelegramJoinStatus(task);
       }
-      //  else if (task.id === "buyTokens") {
-      //   // Logic for rewarding token purchase task
-      //   completeTask(task.id);
-      // }
     } else {
+      if (task.id === "XLikeRetweet" && !socialTasksCompleted["XFollow"]) {
+        alert("Please complete the Follow task first!");
+        setIsLoading((prevLoading) => ({ ...prevLoading, [task.id]: false }));
+        return;
+      }
+  
       window.open(task.url, "_blank");
       setTimeout(() => {
         completeTask(task);
       }, 10000); // 10 seconds delay
     }
   };
+  
 
   const checkTelegramJoinStatus = (task) => {
     // Simulating checking if user has joined Telegram group
@@ -188,7 +186,7 @@ export default function EarnTasks() {
       </div>
       <p className='my-2 font-semibold text-center'>
         Finish <span className='text-yellow-300'>500</span> tasks to claim{" "}
-        <span className='text-green-500'> 🌳 10 USDT</span>
+        <span className='text-green-500'> 🌳 $snoo</span>
       </p>
       <div className='bg-[#002247] flex items-center justify-between rounded-lg my-5 px-2 pr-5'>
         <div className='w-20'>

@@ -12,7 +12,7 @@ import { authenticateUser } from "@/hooks/authenticate";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import axios from "axios";
 
-axios.defaults.baseURL = "https://api.cryptolinkeco.com";
+axios.defaults.baseURL = "https://bibi-backend-e3mt.onrender.com/";
 
 const Home: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -48,7 +48,7 @@ const Home: React.FC = () => {
   const tabs = [
     {
       id: "cryptolink",
-      text: "Cryptolink",
+      text: "snoocoin",
       Icon: () => (
         <div className='w-7'>
           <Image src='/coin.png' alt='' width={100} height={100} priority />
@@ -73,15 +73,7 @@ const Home: React.FC = () => {
          </div>
        ),
      },
-    {
-      id: "wallet",
-      text: "Wallet",
-      Icon: () => (
-        <div className='w-7'>
-          <Image src='/wallet.png' alt='' width={100} height={100} priority />
-        </div>
-      ),
-    },
+    
     {
       id: "investor",
       text: "Investor",
