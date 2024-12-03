@@ -1,311 +1,77 @@
-"use client";
-import React, { useState, useEffect } from "react";
-import { Connection, PublicKey } from "@solana/web3.js";
+import React from "react";
 import { motion } from "framer-motion";
-import { toast } from "react-toastify";
-import Spinner from "./Spinner";
-import Image from "next/image";
-import { SnackbarProvider, enqueueSnackbar } from "notistack";
-import { Divider } from "@mui/material";
-import { useStoreWallet } from "@/hooks/api";
 
-const SOLANA_RPC_ENDPOINT =
-  "https://solana-mainnet.g.alchemy.com/v2/Ezf44rp49UO6_D7pUfYjaXHFXwbIqRlc";
-
-const APY_RATES = {
-  30: 0.0125, // 1.25% APY for 30 days
-};
-
-const calculateDailyEarnings = (balance, apy, days) => {
-  const totalRewards = balance * apy; // Total rewards for the period
-  return totalRewards / days; // Daily earnings
-};
-
-const calculateTotalRewards = (balance, apy) => {
-  return balance * apy; // Total rewards for the period
-};
-
-const RankingBadge = ({ rankingLevel }) => {
-  const badges = {
-    Gold: "🥇",
-    Silver: "🥈",
-    Bronze: "🥉",
-    Diamond: "💎",
-    Platinum: "🏆",
-    Satoshi: "🌟",
-  };
+export default function OGTeaser() {
   return (
-    <span className='font-bold text-green-400'>
-      {badges[rankingLevel] || "❓"} {rankingLevel}
-    </span>
-  );
-};
-
-export default function InvestorTab({ user }) {
-  const [address, setAddress] = useState(
-    localStorage.getItem("solanaAddress") || ""
-  );
-  const [balance, setBalance] = useState(null);
-  const [rankingLevel, setRankingLevel] = useState("Unknown");
-  const [loading, setLoading] = useState(true);
-  const [walletFetched, setWalletFetched] = useState(false);
-  const { data, mutate } = useStoreWallet();
-
-  console.log(data);
-
-  useEffect(() => {
-    const savedAddress = localStorage.getItem("solanaAddress");
-    if (savedAddress) {
-      setAddress(savedAddress);
-      handleSubmit(); // Automatically fetch balance if an address is already saved
-    } else setLoading(false);
-  }, []);
-
-  useEffect(() => {
-    if (walletFetched) {
-      localStorage.setItem("solanaAddress", address);
-    }
-  }, [walletFetched, address]);
-
-  const isValidSolanaAddress = (address) => {
-    try {
-      new PublicKey(address);
-      return true;
-    } catch (err) {
-      return false;
-    }
-  };
-
-  const handleSubmit = async () => {
-    if (!address) {
-      enqueueSnackbar("Please enter a Solana address.", {
-        variant: "error",
-      });
-      return;
-    }
-
-    if (!isValidSolanaAddress(address)) {
-      enqueueSnackbar("Invalid Solana address. Please check and try again.", {
-        variant: "error",
-      });
-      return;
-    }
-
-    setLoading(true);
-
-    try {
-      const connection = new Connection(SOLANA_RPC_ENDPOINT);
-      const publicKey = new PublicKey(address);
-      const bibiTokenMintAddress =
-        "HPywjr3AchS3Z7JGJRJ4oqxhpDAw7CgmUffCXsZHbq9G";
-      const bibiTokenBalance = await getTokenBalance(
-        connection,
-        publicKey,
-        bibiTokenMintAddress
-      );
-
-      mutate({ id: user?.id, address: address });
-      setBalance(bibiTokenBalance);
-      setRankingLevel(getRankingLevel(bibiTokenBalance));
-      setWalletFetched(true);
-      toast.success("Balance fetched successfully!");
-    } catch (err) {
-      console.error("Error fetching balance:", err);
-      toast.error("Error fetching balance. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const getTokenBalance = async (connection, publicKey, tokenMintAddress) => {
-    try {
-      const tokenAccounts = await connection.getParsedTokenAccountsByOwner(
-        publicKey,
-        {
-          mint: new PublicKey(tokenMintAddress),
-        }
-      );
-      const balanceInfo =
-        tokenAccounts.value[0]?.account?.data?.parsed?.info?.tokenAmount
-          ?.uiAmount;
-      return balanceInfo || 0;
-    } catch (err) {
-      console.error("Error fetching token balance:", err);
-      return 0;
-    }
-  };
-
-  const getRankingLevel = (balance) => {
-    if (balance === null || balance === undefined) return "Unknown";
-    if (balance > 5000000) return "Satoshi";
-    if (balance > 1000000) return "Platinum";
-    if (balance > 500000) return "Diamond";
-    if (balance > 100000) return "Gold";
-    if (balance > 50000) return "Silver";
-    return "Bronze";
-  };
-
-  const maskAddress = (address) => {
-    return `${address.slice(0, 6)}...${address.slice(-6)}`;
-  };
-
-  // APY and days settings
-  const apy = APY_RATES[30]; // 10% APY
-  const days = 30;
-
-  const dailyEarnings =
-    balance !== null ? calculateDailyEarnings(balance, apy, days) : 0;
-  const totalEarnings =
-    balance !== null ? calculateTotalRewards(balance, apy) : 0;
-
-  const getBackgroundColor = (rankingLevel) => {
-    switch (rankingLevel) {
-      case "Gold":
-        return "bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600";
-      case "Silver":
-        return "bg-gradient-to-r from-gray-300 via-gray-400 to-gray-500";
-      case "Bronze":
-        return "bg-gradient-to-r from-orange-400 via-orange-500 to-orange-600";
-      case "Diamond":
-        return "bg-gradient-to-r from-blue-400 via-blue-500 to-blue-600";
-      case "Platinum":
-        return "bg-gradient-to-r from-purple-400 via-purple-500 to-purple-600";
-      case "Satoshi":
-        return "bg-gradient-to-r from-green-400 via-green-500 to-green-600";
-      default:
-        return "bg-gradient-to-r from-gray-700 via-gray-800 to-gray-900";
-    }
-  };
-
-  const handleChangeWallet = () => {
-    setWalletFetched(false);
-    setAddress("");
-    setBalance(null);
-    setRankingLevel("Unknown");
-    localStorage.removeItem("solanaAddress");
-  };
-
-  return (
-    <SnackbarProvider
-      maxSnack={3}
-      autoHideDuration={2000}
-      anchorOrigin={{
-        vertical: "top",
-        horizontal: "center",
-      }}>
-      <div
-        className={`w-full mx-auto mt-5 px-6 pb-6 pt-2 mb-20 rounded-lg shadow-lg`}>
-        <div
-          className={`flex items-center ${walletFetched && "justify-between"}`}>
-          <div className='flex items-center'>
-            <Image src='/cats.png' width={70} height={70} alt='Bibi' />
-            <h1 className='text-yellow-400 font-bold text-center'>
-              Bibi <span className='text-green-400'>Investor</span>
-            </h1>
-          </div>
-          {walletFetched && (
-            <div className='font-semibold'>@{user.username}</div>
-          )}
-        </div>
-
-        {!walletFetched && (
-          <p className='mt-2 text-lg mb-6'>
-            Welcome, {user ? `@${user.username}` : "Guest"}! Please enter your
-            Solana address to view your Bibi token balance and ranking level.
-          </p>
-        )}
-
-        {!walletFetched && (
-          <div className='mb-6'>
-            <input
-              type='text'
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
-              placeholder='Enter your Solana address'
-              className='w-full p-3 border border-gray-600 rounded-lg bg-gray-700 text-white focus:outline-none focus:border-blue-500'
-            />
-            <button
-              onClick={handleSubmit}
-              className='mt-4 w-full bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-600 transition-colors'>
-              Fetch Balance
-            </button>
-          </div>
-        )}
-
-        {balance !== null && walletFetched && (
-          <div className='my-2'>
-            <div className='flex flex-wrap gap-2 mb-5'>
-              <div className='bg-white px-3 font-semibold py-2 w-fit rounded-md shadow-xl'>
-                <p className='text-slate-500 text-sm'>Bibi Balance</p>
-                <div className='text-green-400 font-semibold pt-1 text-lg'>
-                  {new Intl.NumberFormat().format(balance)}{" "}
-                </div>
-              </div>
-              <div className='bg-white px-3 font-semibold py-2 w-fit rounded-md'>
-                <p className='text-slate-500 text-sm'>Bibi Daily Earnings</p>
-                <div className='text-green-400 font-semibold pt-1 text-lg'>
-                  {new Intl.NumberFormat().format(dailyEarnings)}{" "}
-                </div>
-              </div>
-              <div className='bg-white px-2.5 font-semibold py-2 w-fit rounded-md'>
-                <p className='text-slate-500 text-sm'>
-                  Total Rewards (30 days)
-                </p>
-                <div className='text-green-400 font-semibold pt-1 text-lg'>
-                  {new Intl.NumberFormat().format(totalEarnings)}{" "}
-                  <span className='text-slate-400'>Bibi</span>
-                </div>
-              </div>
-              <div
-                className={`${getBackgroundColor(
-                  rankingLevel
-                )} px-2.5 font-semibold py-2 w-fit rounded-md`}>
-                <p className='text-slate-100 text-sm'>Ranking Level</p>
-                <div className='text-green-400 font-semibold pt-1 text-lg'>
-                  <RankingBadge rankingLevel={rankingLevel} />
-                </div>
-              </div>
-              <div className='bg-white pl-3 pr-5 font-semibold py-2 w-fit rounded-md'>
-                <p className='text-slate-500 text-sm'>Wallet Address</p>
-                <div className='text-green-400 font-semibold pt-1 text-lg'>
-                  {maskAddress(address)}
-                </div>
-              </div>
-            </div>
-
-            <p className='text-md my-5'>
-              Your current earnings are based on the annual percentage yield
-              (APY) and the duration for which your tokens have been staked. The
-              APY and daily earnings can vary based on the duration of staking.
-            </p>
-
-            <Divider />
-
-            <button
-              onClick={handleChangeWallet}
-              className='mt-4 w-full bg-red-500 text-white p-3 rounded-lg hover:bg-red-600 transition-colors'>
-              Change Wallet
-            </button>
-          </div>
-        )}
-        {!walletFetched && (
-          <div className='text-sm mt-5'>
-            ⓘ Your wallet address is secured and used solely to fetch your
-            balance.
-          </div>
-        )}
-        {loading && (
-          <div className='absolute left-0 top-0 bg-slate-400 opacity-90 w-full'>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.5 }}>
-              <Spinner />
-            </motion.div>
-          </div>
-        )}
+    <div className="bg-gradient-to-b from-blue-900 to-black text-white min-h-screen flex flex-col items-center justify-center relative">
+      {/* Hero Section */}
+      <div className="relative text-center">
+        <motion.div
+          animate={{ rotateY: 360 }}
+          transition={{ duration: 10, repeat: Infinity }}
+          className="w-64 h-96 bg-gradient-to-r from-purple-600 to-blue-600 shadow-2xl rounded-lg flex items-center justify-center mx-auto p-6 cursor-pointer transform hover:scale-105 transition-transform">
+          <motion.div
+            whileHover={{ scale: 1.1, rotate: 10 }}
+            className="relative w-full h-full bg-gradient-to-r from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center shadow-2xl p-4">
+            <p className="absolute top-4 left-4 text-lg font-semibold text-white text-shadow-lg">OG</p>
+            <p className="text-4xl font-extrabold text-white text-center">OG Pass</p>
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-blue-500 to-transparent rounded-lg opacity-60 animate-pulse"></div>
+          </motion.div>
+        </motion.div>
+        <h1 className="mt-6 text-3xl font-bold">Be Part of the Exclusive OG Club</h1>
+        <p className="mt-4 text-lg text-gray-300">
+          Unlock guaranteed rewards, special privileges, and hidden perks.
+        </p>
       </div>
-    </SnackbarProvider>
+
+      {/* Benefits Section */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12 px-6 w-full max-w-5xl">
+        {["Guaranteed Rewards", "Exclusive Events", "Hidden Perks"].map((benefit, index) => (
+          <motion.div
+            key={index}
+            whileHover={{ scale: 1.05, rotateX: 10 }}
+            className="bg-white/10 backdrop-blur-md rounded-lg p-6 shadow-lg border border-white/20 transform transition-all hover:shadow-2xl">
+            <div className="text-2xl font-semibold text-white">{benefit}</div>
+            <p className="text-gray-400 mt-2">
+              {index === 0
+                ? "Earn bonus rewards as an OG."
+                : index === 1
+                ? "Access secret events and opportunities."
+                : "Enjoy benefits no one else has seen."}
+            </p>
+          </motion.div>
+        ))}
+      </div>
+
+      {/* Updated Curious Minds Section */}
+      <div className="mt-12 text-center">
+        <h3 className="text-3xl font-bold mb-4">Become Part of Something Big</h3>
+        <p className="text-lg mb-6 text-gray-300">
+          Take the first step into a growing movement. Secure your access to future rewards and join a visionary journey.
+        </p>
+        <motion.div
+          whileHover={{ scale: 1.1 }}
+          className="bg-gradient-to-r from-green-400 to-blue-500 px-10 py-5 rounded-lg shadow-xl text-white font-semibold text-lg cursor-pointer transform transition-all hover:shadow-2xl">
+          <span className="block text-2xl">Join the Movement</span>
+          <span className="block text-sm mt-1 text-yellow-300">Earn exclusive rewards as an early believer.</span>
+        </motion.div>
+        <p className="mt-4 text-gray-400">
+          Don't just buy a token—invest in a future where your vision grows with ours.
+        </p>
+      </div>
+
+      {/* Coming Soon Section */}
+      <div className="mt-20">
+        <div className="relative w-80 h-80 mx-auto">
+          <div className="absolute inset-0 rounded-full bg-gradient-to-r from-purple-800 to-black animate-pulse"></div>
+          <div className="absolute inset-5 rounded-full bg-black flex items-center justify-center">
+            <p className="text-xl font-bold text-yellow-400">OG Portal Unlocks Soon</p>
+          </div>
+        </div>
+        <p className="mt-6 text-gray-400">
+          The OG path is hidden for now, but keep holding your tokens.
+        </p>
+      </div>
+    </div>
   );
 }

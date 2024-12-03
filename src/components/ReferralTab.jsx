@@ -33,8 +33,8 @@ export default function ReferralTab({ user }) {
   };
 
   return (
-    <div className='p-5 mb-24'>
-      <div className='flex justify-between items-center rounded-lg bg-[#002247] py-3 px-4'>
+    <div className='p-5 mb-24 bg-gradient-to-b from-blue-900 to-black' >
+      <div className='flex justify-between items-center rounded-lg bg-gradient-to-b from-blue-900 to-black py-3 px-4'>
         {/* User Information */}
         <div className='flex items-center w-full sm:w-1/4'>
           <div className='w-10'>
@@ -76,8 +76,8 @@ export default function ReferralTab({ user }) {
           <div className='ml-3'>
             <div className='flex items-center mt-1'>
               <p>
-                <span className='text-yellow-300'>+10,000 SnooPoints</span> for
-                you and your friend when you invite 10 active users
+                <span className='text-yellow-300'>+1000 Snoocoins</span> for
+                you and your friend.
               </p>
             </div>
           </div>

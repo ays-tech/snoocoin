@@ -1,6 +1,7 @@
+
 import { LinearProgress } from "@mui/material";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const earnType = [
   {
@@ -29,7 +30,7 @@ const earnType = [
   },
   {
     id: "campaign",
-    text: "partners",
+    text: "Partners",
     Icon: () => (
       <div className='w-7'>
         <Image
@@ -48,7 +49,7 @@ const tasks = [
   {
     type: "social",
     id: "telegramJoin",
-    text: "join group",
+    text: "Join Group",
     coin: "+300",
     Icon: () => (
       <div className="w-7">
@@ -61,7 +62,7 @@ const tasks = [
   {
     type: "social",
     id: "XFollow",
-    text: "follow Snoocoin",
+    text: "Follow Snoocoin",
     coin: "+100",
     Icon: () => (
       <div className="w-7">
@@ -106,26 +107,53 @@ const tasks = [
     ),
     url: "https://t.me/notgamescommunity",
   },
+  // New PumpFun Task under Daily
+  {
+    type: "daily",
+    id: "pumpFun",
+    text: "Visit PumpFun",
+    coin: "+200",
+    Icon: () => (
+      <div className="w-7">
+        <Image src="/coin.png" alt="pumpfun" width={100} height={100} priority />
+      </div>
+    ),
+    url: "https://pump.fun/coin/DNCERqVsdCdoeKWNt9EBCpdqci97cY4X8eVhnzqqpump",
+  },
 ];
-
 
 export default function EarnTasks() {
   const [taskType, setTaskType] = useState("social");
   const [isLoading, setIsLoading] = useState({});
   const [reward, setReward] = useState(false);
+  const [lastClaimed, setLastClaimed] = useState(localStorage.getItem("lastClaimed") || null);
 
-  const completedTasks = {
-    telegramJoin: localStorage.getItem("telegramJoin"),
-    XFollow: localStorage.getItem("XFollow"),
-    telegramBoost: localStorage.getItem("telegramBoost"),
-    facebookFollow: localStorage.getItem("facebookFollow"),
-    youTubeSub: localStorage.getItem("youTubeSub"),
+  // Initialize tasks from localStorage
+  const getCompletedTasksFromLocalStorage = () => {
+    return {
+      telegramJoin: localStorage.getItem("telegramJoin") === "true",
+      XFollow: localStorage.getItem("XFollow") === "true",
+      telegramBoost: localStorage.getItem("telegramBoost") === "true",
+      facebookFollow: localStorage.getItem("facebookFollow") === "true",
+      youTubeSub: localStorage.getItem("youTubeSub") === "true",
+      pumpFun: localStorage.getItem("pumpFun") === "true",
+    };
   };
 
-  const [socialTasksCompleted, setSocialTasksCompleted] =
-    useState(completedTasks);
+  const [socialTasksCompleted, setSocialTasksCompleted] = useState(getCompletedTasksFromLocalStorage);
 
   const filteredTasks = tasks.filter((task) => task.type === taskType);
+
+  useEffect(() => {
+    // Reset daily tasks after 24 hours
+    const currentTime = new Date().getTime();
+    const lastClaimedTime = lastClaimed ? new Date(lastClaimed).getTime() : 0;
+
+    if (currentTime - lastClaimedTime >= 86400000) {
+      setLastClaimed(null); // Reset daily tasks
+      localStorage.removeItem("lastClaimed"); // Remove the saved last claim time
+    }
+  }, [lastClaimed]);
 
   const handleTaskDisplay = (type) => {
     setTaskType(type);
@@ -133,7 +161,7 @@ export default function EarnTasks() {
 
   const handleSocialTask = (task) => {
     setIsLoading((prevLoading) => ({ ...prevLoading, [task.id]: true }));
-  
+
     if (task.customAction) {
       if (task.id === "telegramJoin") {
         checkTelegramJoinStatus(task);
@@ -144,21 +172,21 @@ export default function EarnTasks() {
         setIsLoading((prevLoading) => ({ ...prevLoading, [task.id]: false }));
         return;
       }
-  
+
       window.open(task.url, "_blank");
       setTimeout(() => {
         completeTask(task);
       }, 10000); // 10 seconds delay
     }
   };
-  
+
+
 
   const checkTelegramJoinStatus = (task) => {
-    // Simulating checking if user has joined Telegram group
-    const hasJoinedTelegram = true; // Replace with actual logic to check membership
+    const hasJoinedTelegram = true; // Simulate joining logic here
 
     if (hasJoinedTelegram) {
-      window.open("https://t.me/bibiapp_bot", "_blank"); // Open Telegram group link if joined
+      window.open("https://t.me/bibiapp_bot", "_blank"); // Open Telegram group if joined
       setTimeout(() => {
         completeTask(task);
       }, 10000); // 10 seconds delay
@@ -171,98 +199,115 @@ export default function EarnTasks() {
   const completeTask = (task) => {
     const balance = parseInt(localStorage.getItem("points")) || 0;
     setIsLoading((prevLoading) => ({ ...prevLoading, [task.id]: false }));
-    setSocialTasksCompleted((prevTasks) => ({ ...prevTasks, [task.id]: true }));
-    // Add logic for completed task
+
+    // Update localStorage and React state
+    localStorage.setItem(`${task.id}`, "true"); // Mark task as completed in localStorage
+    setSocialTasksCompleted((prevTasks) => {
+      const updatedTasks = { ...prevTasks, [task.id]: true };
+      return updatedTasks;
+    });
+
+    // Add reward points
+    localStorage.setItem("points", balance + parseInt(task.coin));
     setReward(true);
     setTimeout(() => setReward(false), 2000);
-    localStorage.setItem("points", balance + parseInt(task.coin));
-    localStorage.setItem(`${task.id}`, "true");
   };
 
+  const handleDailyClaim = () => {
+    if (!lastClaimed || new Date().getTime() - new Date(lastClaimed).getTime() >= 86400000) {
+      const balance = parseInt(localStorage.getItem("points")) || 0;
+      const newBalance = balance + 200;
+
+      localStorage.setItem("points", newBalance.toString());
+      setReward(true);
+      setLastClaimed(new Date().toString());
+      localStorage.setItem("lastClaimed", new Date().toString());
+      setTimeout(() => setReward(false), 2000);
+    } else {
+      alert("You have already claimed your daily reward!");
+    }
+  };
+
+
+
+
   return (
-    <div className='py-5 px-2'>
-      <div className='font-bold text-lg text-center'>
-        Complete Tasks to Earn More
-      </div>
-      <p className='my-2 font-semibold text-center'>
-        Finish <span className='text-yellow-300'>500</span> tasks to claim{" "}
-        <span className='text-green-500'> 🌳 $snoo</span>
+    <div className="py-5 px-2">
+      <div className="font-bold text-lg text-center">Complete Tasks to Earn More</div>
+      <p className="my-2 font-semibold text-center">
+        Finish <span className="text-yellow-300">500</span> tasks to claim <span className="text-green-500"> 🌳 $snoo</span>
       </p>
-      <div className='bg-[#002247] flex items-center justify-between rounded-lg my-5 px-2 pr-5'>
-        <div className='w-20'>
-          <Image width={100} height={100} src='/tasks.svg' alt='task icon' />
+      <div className="bg-[#002247] flex items-center justify-between rounded-lg my-5 px-2 pr-5">
+        <div className="w-20">
+          <Image width={100} height={100} src="/tasks.svg" alt="task icon" />
         </div>
-        <div className='flex flex-col items-center gap-2.5 w-2/5'>
-          <p>Tasks: 0/50</p>
-          <LinearProgress
-            variant='determinate'
-            value={50}
-            color='success'
-            sx={{ height: 4, width: "100%" }}
-          />
+        <div className="flex flex-col items-center gap-2.5 w-2/5">
+                  <p>Tasks: 0/5</p>
+          <LinearProgress className="w-full" />
         </div>
-        <div className='bg-green-400 px-2 py-1 rounded-md'>Claim</div>
-      </div>
-      <div className='flex flex-wrap gap-1'>
-        {earnType.map((earn) => (
-          <div
-            key={earn.id}
-            onClick={() => handleTaskDisplay(earn.id)}
-            className={`flex items-center gap-2 px-2 py-2 rounded-lg ${
-              taskType === earn.id
-                ? "bg-green-300 text-[#002247] font-semibold outline outline-1"
-                : "bg-[#002247]"
-            }`}>
-            <earn.Icon />
-            <div>{earn.text}</div>
+        <div className="w-16 flex justify-end">
+          <div className="rounded-lg bg-[#009A4D] flex flex-col gap-1 py-2 px-3 text-white">
+            <div className="text-xs">Rewards</div>
+            <div className="text-xl font-bold">+200</div>
           </div>
+        </div>
+      </div>
+
+      {/* Task Type Buttons */}
+      <div className="flex gap-3 mb-5">
+        {earnType.map((item) => (
+          <button
+            key={item.id}
+            onClick={() => handleTaskDisplay(item.id)}
+            className={`px-4 py-2 rounded-full text-xs font-semibold ${
+              taskType === item.id ? "bg-blue-500 text-white" : "bg-gray-300"
+            }`}
+          >
+            <item.Icon />
+            {item.text}
+          </button>
         ))}
       </div>
-      <div className='text-left my-3'>
-        {taskType[0].toUpperCase() + taskType.slice(1)} Tasks
-      </div>
-      <div className='flex flex-col gap-2 pb-20'>
-        {filteredTasks.map((task, index) => (
-          <div
-            key={index}
-            className='bg-[#002247] flex items-center justify-between gap-2 p-3 rounded-lg'>
-            <div className='flex items-center'>
+
+      {/* Task List */}
+      <div className="space-y-3">
+        {filteredTasks.map((task) => (
+          <div key={task.id} className="flex justify-between items-center bg-[#1A1A1A] p-4 rounded-lg">
+            <div className="flex items-center gap-3">
               <task.Icon />
-              <div className='ml-5'>
-                <p>{task.text}</p>
-                <div className='flex items-center mt-1'>
-                  <div className='w-6 mr-1'>
-                    <Image
-                      width={100}
-                      height={100}
-                      alt='next'
-                      src='/coin.png'
-                    />
-                  </div>
-                  <p>{task.coin}</p>
-                </div>
+              <div>
+                <p className="text-lg">{task.text}</p>
+                <p className="text-sm text-gray-400">{task.coin} points</p>
               </div>
             </div>
+            <button
+              onClick={() => handleSocialTask(task)}
+              className="px-4 py-2 bg-blue-500 text-white rounded-full"
+              disabled={socialTasksCompleted[task.id]}
+            >
+              {socialTasksCompleted[task.id] ? "Completed" : "Complete"}
+            </button>
 
-            {!socialTasksCompleted[task.id] ? (
-              isLoading[task.id] ? (
-                <div className='spinner-border animate-spin inline-block w-4 h-4 border-4 rounded-full border-blue-500 border-t-transparent'></div>
-              ) : (
-                <div onClick={() => handleSocialTask(task)} className='w-10'>
-                  <Image width={100} height={100} alt='next' src='/next.svg' />
-                </div>
-              )
-            ) : (
-              <span className='text-green-500 animate-fade-in'>✔️</span>
-            )}
-            {reward && (
-              <div className='fixed top-5 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-4 py-2 rounded'>
-                You just earned ${task.coin.slice(1)}
-              </div>
-            )}
           </div>
         ))}
       </div>
+
+      {/* Daily Claim Button */}
+      <div className="mt-5 text-center">
+        <button
+          onClick={handleDailyClaim}
+          className="px-6 py-3 bg-green-500 text-white rounded-full"
+          disabled={lastClaimed && new Date().getTime() - new Date(lastClaimed).getTime() < 86400000}
+        >
+          {lastClaimed ? "Claim Again in 24 Hours" : "Claim Daily Reward"}
+        </button>
+      </div>
+
+      {reward && (
+        <div className="fixed bottom-5 left-1/2 transform -translate-x-1/2 py-2 px-6 bg-green-600 text-white rounded-lg">
+          Reward Claimed!
+        </div>
+      )}
     </div>
   );
 }

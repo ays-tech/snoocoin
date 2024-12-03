@@ -15,7 +15,7 @@ const TASKS_CONFIG = [
   },
   {
     id: 'telegramJoin',
-    label: 'Join  Telegram group',
+    label: 'Join Telegram group',
     actionText: 'Join',
     customAction: true, // Special case for custom action
   },
@@ -25,18 +25,17 @@ const TASKS_CONFIG = [
     url: 'https://twitter.com/{retweet_link}',
     actionText: 'Retweet',
   },
- 
-{
-    id: 'youtubeFollow',
-    label: 'Subscribe Youtube channel',
-    url: 'https://youtube.com/{youtube_id}/',
-    actionText: 'Follow',
-  },
   {
     id: 'buyTokens',
     label: 'Buy tokens',
     actionText: 'Buy Tokens',
     customAction: true, // Special case for custom action
+  },
+  {
+    id: 'pumpFunPage',
+    label: 'Check out our PumpFun page',
+    url: 'https://pump.fun/coin/DNCERqVsdCdoeKWNt9EBCpdqci97cY4X8eVhnzqqpump',
+    actionText: 'Visit Page',
   },
 ];
 
@@ -51,6 +50,9 @@ export default function TaskTab() {
     if (storedPoints) {
       setTotalPoints(parseInt(storedPoints));
     }
+    
+    // Add console.log to check TASKS_CONFIG
+    console.log("TASKS_CONFIG:", TASKS_CONFIG);
   }, []);
 
   const handleLogin = () => {
@@ -66,14 +68,13 @@ export default function TaskTab() {
       if (task.id === 'telegramJoin') {
         checkTelegramJoinStatus(task);
       } else if (task.id === 'buyTokens') {
-        // Logic for rewarding token purchase task
         completeTask(task.id);
       }
     } else {
       window.open(task.url, '_blank');
       setTimeout(() => {
         completeTask(task.id);
-      }, 10000); // 10 seconds delay
+      }, 10000); // 10 seconds delay to simulate task completion
     }
   };
 
@@ -103,13 +104,13 @@ export default function TaskTab() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-gray-800 via-gray-900 to-black text-white font-sans">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-blue-900 to-black text-white font-sans">
       <div className="text-center mb-8">
         <h2 className="text-4xl font-bold mb-4">Complete the Challenges, Earn the Rewards!</h2>
         <h3 className="text-2xl mb-4">Total Points: {totalPoints}</h3>
       </div>
 
-      <div className="w-full max-w-lg bg-gray-800 rounded-lg shadow-lg p-6">
+      <div className="w-full max-w-lg bg-gradient-to-b from-blue-900 to-black rounded-lg shadow-lg p-6">
         <h3 className="text-2xl font-bold mb-4 text-center text-gray-300">Social Media Tasks</h3>
         <ul className="space-y-4">
           {TASKS_CONFIG.map((task) => (

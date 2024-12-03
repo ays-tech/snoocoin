@@ -88,7 +88,7 @@ const Home: React.FC = () => {
   const renderTabContent = () => {
     switch (currentTab) {
       case "cryptolink":
-        return <TapToEarnTab />;
+        return <TapToEarnTab user={user} />;
       case "tapToEarn":
         return <EarnTasks />;
        case "invite":
