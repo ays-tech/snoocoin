@@ -56,7 +56,7 @@ const tasks = [
         <Image src="/telegram.svg" alt="telegram" width={100} height={100} priority />
       </div>
     ),
-    url: "t.me/bibi_anoucement",
+    url: "t.me/scoocoins",
     customAction: true,
   },
   {
@@ -69,7 +69,7 @@ const tasks = [
         <Image src="/x.png" alt="x" width={100} height={100} priority />
       </div>
     ),
-    url: "https://x.com/bi_bi_solana?s=21",
+    url: "https://x.com/snoocoin?s=21",
   },
   {
     type: "social",
@@ -81,20 +81,9 @@ const tasks = [
         <Image src="/x.png" alt="retweet" width={100} height={100} priority />
       </div>
     ),
-    url: "https://x.com/bi_bi_solana/status/123456789", // Replace with your pinned post URL
+    url: "https://x.com/snoocoin", // Replace with your pinned post URL
   },
-  {
-    type: "campaign",
-    id: "youTubeSubscribe",
-    text: "Follow The Media Motivator",
-    coin: "+200",
-    Icon: () => (
-      <div className="w-7">
-        <Image src="/youtube.svg" alt="youtube" width={100} height={100} priority />
-      </div>
-    ),
-    url: "https://youtube.com/@thegreatthinker?si=P4Uhr7jhwcqMRNyP",
-  },
+  
   {
     type: "campaign",
     id: "telegramNOT",
@@ -186,7 +175,7 @@ export default function EarnTasks() {
     const hasJoinedTelegram = true; // Simulate joining logic here
 
     if (hasJoinedTelegram) {
-      window.open("https://t.me/bibiapp_bot", "_blank"); // Open Telegram group if joined
+      window.open("https://t.me/snoocoins", "_blank"); // Open Telegram group if joined
       setTimeout(() => {
         completeTask(task);
       }, 10000); // 10 seconds delay
@@ -198,38 +187,23 @@ export default function EarnTasks() {
 
   const completeTask = (task) => {
     const balance = parseInt(localStorage.getItem("points")) || 0;
-    setIsLoading((prevLoading) => ({ ...prevLoading, [task.id]: false }));
-
-    // Update localStorage and React state
-    localStorage.setItem(`${task.id}`, "true"); // Mark task as completed in localStorage
+  
+    // Mark task as completed in localStorage and state
+    localStorage.setItem(`${task.id}`, "true");
+  
     setSocialTasksCompleted((prevTasks) => {
       const updatedTasks = { ...prevTasks, [task.id]: true };
       return updatedTasks;
     });
-
-    // Add reward points
+  
+    // Update points
     localStorage.setItem("points", balance + parseInt(task.coin));
+  
+    // Trigger reward display
     setReward(true);
     setTimeout(() => setReward(false), 2000);
   };
-
-  const handleDailyClaim = () => {
-    if (!lastClaimed || new Date().getTime() - new Date(lastClaimed).getTime() >= 86400000) {
-      const balance = parseInt(localStorage.getItem("points")) || 0;
-      const newBalance = balance + 200;
-
-      localStorage.setItem("points", newBalance.toString());
-      setReward(true);
-      setLastClaimed(new Date().toString());
-      localStorage.setItem("lastClaimed", new Date().toString());
-      setTimeout(() => setReward(false), 2000);
-    } else {
-      alert("You have already claimed your daily reward!");
-    }
-  };
-
-
-
+  
 
   return (
     <div className="py-5 px-2">
@@ -281,12 +255,13 @@ export default function EarnTasks() {
               </div>
             </div>
             <button
-              onClick={() => handleSocialTask(task)}
-              className="px-4 py-2 bg-blue-500 text-white rounded-full"
-              disabled={socialTasksCompleted[task.id]}
-            >
-              {socialTasksCompleted[task.id] ? "Completed" : "Complete"}
-            </button>
+            onClick={() => handleSocialTask(task)}
+            className="px-4 py-2 bg-blue-500 text-white rounded-full"
+            disabled={socialTasksCompleted[task.id]}
+          >
+            {socialTasksCompleted[task.id] ? "Completed" : "Complete"}
+          </button>
+
 
           </div>
         ))}
@@ -294,7 +269,7 @@ export default function EarnTasks() {
 
       {/* Daily Claim Button */}
       <div className="mt-5 text-center">
-        <button
+        <handleSocialTask
           onClick={handleDailyClaim}
           className="px-6 py-3 bg-green-500 text-white rounded-full"
           disabled={lastClaimed && new Date().getTime() - new Date(lastClaimed).getTime() < 86400000}
