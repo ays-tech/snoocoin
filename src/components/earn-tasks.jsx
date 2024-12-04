@@ -29,7 +29,7 @@ const tasks = [
     text: "Follow Snoocoin",
     coin: "+500",
     iconSrc: "/x.png", // Different icon for a different task
-    url: "https://x.com/snoocoin?s=21",
+    url: "https://x.com/snoo_coin?s=21",
   },
   {
     type: "social",
