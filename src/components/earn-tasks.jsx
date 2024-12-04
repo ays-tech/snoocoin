@@ -1,6 +1,6 @@
-import { LinearProgress } from "@mui/material";
+import { LinearProgress, CircularProgress } from "@mui/material";
 import Image from "next/image";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 const earnType = [
   {
@@ -9,15 +9,6 @@ const earnType = [
     Icon: () => (
       <div className="w-7">
         <Image src="/woman.svg" alt="woman" width={100} height={100} priority />
-      </div>
-    ),
-  },
-  {
-    id: "daily",
-    text: "Daily",
-    Icon: () => (
-      <div className="w-7">
-        <Image src="/clipboard.svg" alt="clipboard" width={100} height={100} priority />
       </div>
     ),
   },
@@ -45,7 +36,6 @@ const tasks = [
       </div>
     ),
     url: "https://t.me/snoocoins",
-    customAction: true,
   },
   {
     type: "social",
@@ -112,9 +102,10 @@ export default function EarnTasks() {
   const handleSocialTask = (task) => {
     setIsLoading((prevLoading) => ({ ...prevLoading, [task.id]: true }));
     window.open(task.url, "_blank");
+
     setTimeout(() => {
       completeTask(task);
-    }, 10000);
+    }, 3000); // Simulate delay for task completion
   };
 
   const completeTask = (task) => {
@@ -129,6 +120,8 @@ export default function EarnTasks() {
     localStorage.setItem("points", points + parseInt(task.coin));
     setReward(true);
     setTimeout(() => setReward(false), 2000);
+
+    setIsLoading((prevLoading) => ({ ...prevLoading, [task.id]: false }));
   };
 
   return (
@@ -139,7 +132,9 @@ export default function EarnTasks() {
           <Image width={100} height={100} src="/tasks.svg" alt="task icon" />
         </div>
         <div className="flex flex-col items-center gap-2.5 w-2/5">
-          <p>Tasks: 0/5</p>
+          <p>
+            Tasks: {Object.values(socialTasksCompleted).filter((v) => v).length}/{tasks.length}
+          </p>
           <LinearProgress className="w-full" />
         </div>
       </div>
@@ -172,10 +167,16 @@ export default function EarnTasks() {
             </div>
             <button
               onClick={() => handleSocialTask(task)}
-              className="px-4 py-2 bg-blue-500 text-white rounded-full"
-              disabled={socialTasksCompleted[task.id]}
+              className="px-4 py-2 bg-blue-500 text-white rounded-full flex items-center justify-center"
+              disabled={socialTasksCompleted[task.id] || isLoading[task.id]}
             >
-              {socialTasksCompleted[task.id] ? "Completed" : "Complete"}
+              {isLoading[task.id] ? (
+                <CircularProgress size={20} className="text-white" />
+              ) : socialTasksCompleted[task.id] ? (
+                "Completed"
+              ) : (
+                "Complete"
+              )}
             </button>
           </div>
         ))}

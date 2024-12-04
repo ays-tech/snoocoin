@@ -76,7 +76,7 @@ const Home: React.FC = () => {
     
     {
       id: "investor",
-      text: "Investors",
+      text: "OG",
       Icon: () => (
         <div className='w-7'>
           <Image src='/invest.png' alt='' width={100} height={100} priority />
