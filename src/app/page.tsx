@@ -74,14 +74,15 @@ const Home: React.FC = () => {
        ),
      },
     
-    {
+     {
       id: "investor",
       text: "OG",
       Icon: () => (
-        <div className='w-7'>
-          <Image src='/invest.png' alt='' width={100} height={100} priority />
+        <div className="w-7">
+          <Image src="/invest.png" alt="" width={100} height={100} priority />
         </div>
       ),
+      disableTab: true,  // Added a property to disable this tab
     },
   ];
 
@@ -114,32 +115,29 @@ const Home: React.FC = () => {
     },
   });
 
-  return (
-    <QueryClientProvider client={queryClient}>
-      <div className='tab-content bg-[#232e3c] text-white'>
-        {renderTabContent()}
-        <div className='w-[96%] flex justify-around bg-[#1E2A47] bg-opacity-70 backdrop-blur-lg rounded-lg p-4 fixed bottom-0 left-[2%]'>
 
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => handleTabChange(tab.id)}
-              className={`flex items-center justify-center flex-col text-white gap-1 ${
-                currentTab === tab.id ? "" : "opacity-50"
-              }`}>
-              <tab.Icon />
-              <span className='text-xs mt-1'>{tab.text}</span>
-            </button>
-          ))}
-        </div>
-        {/* {loadingStage < 3 && (
-          <div className='loading-bar'>
-          <div className='progress' style={{ width: `${progress}%` }}></div>
+    return (
+      <QueryClientProvider client={queryClient}>
+        <div className="tab-content bg-[#232e3c] text-white">
+          {renderTabContent()}
+          <div className="w-[96%] flex justify-around bg-[#1E2A47] bg-opacity-70 backdrop-blur-lg rounded-lg p-4 fixed bottom-0 left-[2%]">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => handleTabChange(tab.id)}
+                className={`flex items-center justify-center flex-col text-white gap-1 ${
+                  currentTab === tab.id ? "" : "opacity-50"
+                } ${tab.disableTab ? "cursor-not-allowed opacity-100" : ""}`}
+                disabled={tab.disableTab} // Disable the OG tab completely
+              >
+                <tab.Icon />
+                <span className="text-xs mt-1">{tab.text}</span>
+              </button>
+            ))}
           </div>
-          )} */}
-      </div>
-    </QueryClientProvider>
-  );
+        </div>
+      </QueryClientProvider>
+    );
 };
 
 export default Home;
