@@ -43,7 +43,7 @@ const tasks = [
   {
     type: "campaign",
     id: "nothingGames",
-    text: "Join NOTHINGGames Community",
+    text: "Join Community",
     coin: "+500",
     iconSrc: "/telegram.svg", // Icon for campaign task
     url: "https://t.me/notgamescommunity",
