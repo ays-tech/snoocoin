@@ -119,9 +119,6 @@ export default function ReferralTab({ user }) {
                 key={referral.uid}
                 className="bg-[#1e293b] shadow-md p-4 rounded-lg text-center text-white"
               >
-                <div className="flex justify-center">
-                  <Image src="/avatarcat.webp" alt="avatar" height={50} width={50} />
-                </div>
                 <h4 className="font-bold mt-2">{`@${referral.username}`}</h4>
                 <p className="text-sm text-gray-400">{`User ID: ${referral.uid}`}</p>
                 <p className="mt-1 text-green-400">Active User</p>
