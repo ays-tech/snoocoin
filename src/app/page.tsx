@@ -118,7 +118,8 @@ const Home: React.FC = () => {
     <QueryClientProvider client={queryClient}>
       <div className='tab-content bg-[#232e3c] text-white'>
         {renderTabContent()}
-        <div className='w-[96%] flex justify-around bg-[#2A522B] bg-opacity-50 backdrop-blur-sm rounded-lg p-4 fixed bottom-0 left-[2%]'>
+        <div className='w-[96%] flex justify-around bg-[#1E2A47] bg-opacity-70 backdrop-blur-lg rounded-lg p-4 fixed bottom-0 left-[2%]'>
+
           {tabs.map((tab) => (
             <button
               key={tab.id}
