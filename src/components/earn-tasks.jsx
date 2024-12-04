@@ -79,7 +79,7 @@ export default function EarnTasks() {
 
     setTimeout(() => {
       completeTask(task);
-    }, 3000); // Simulate delay for task completion
+    }, 7000); // Simulate delay for task completion
   };
 
   const completeTask = (task) => {
