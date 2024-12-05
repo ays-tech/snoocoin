@@ -51,7 +51,7 @@ const Home: React.FC = () => {
       text: "snoocoin",
       Icon: () => (
         <div className='w-7'>
-          <Image src='/coin.png' alt='' width={100} height={100} priority />
+          <Image src='/snoo.png' alt='' width={200} height={200} priority />
         </div>
       ),
     },
