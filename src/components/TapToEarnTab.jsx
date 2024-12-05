@@ -72,7 +72,7 @@ export default function SnooEarning({ user }) {
           sx={{ height: 12, borderRadius: 10 }}
         />
         <p className="text-gray-400 text-xs mt-2">
-          Progress to next milestone: {points.toLocaleString()} / {nextMilestone.toLocaleString()} Snoo Tokens
+           {points.toLocaleString()} / {nextMilestone.toLocaleString()} Snoocoins
         </p>
       </div>
 
