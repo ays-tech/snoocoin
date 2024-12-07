@@ -43,17 +43,26 @@ export default function SnooEarning({ user }) {
   const progress = ((points / nextMilestone) * 100).toFixed(2);
 
   return (
-    <div className="h-screen flex flex-col justify-center items-center bg-gradient-to-b from-blue-900 to-black p-5 text-center">
+    <div className="h-screen flex flex-col justify-center items-center bg-gradient-to-b from-blue-900 to-black p-5 text-center relative">
+     {/* Banner */}
+    <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-yellow-400 to-yellow-600 text-black py-3 shadow-lg text-center">
+      <p className="font-bold text-sm sm:text-base md:text-lg tracking-wide">
+        🎉 Token Distribution in Progress... Stay Tuned! 🎉
+      </p>
+    </div>
+
+
       {/* Snoo Mascot */}
-      <div>
+      <div className="mt-10">
         <Image
-          src="/snoo.png"
+          src="/snoocart.png"
           alt="Snoo mascot"
           width={200}
           height={200}
           priority
           className="rounded-full animate-pulse shadow-md"
         />
+
       </div>
 
       {/* Points Display */}
@@ -61,20 +70,15 @@ export default function SnooEarning({ user }) {
         <h1 className="text-3xl font-bold text-yellow-300">
           <span className="text-white">{points}</span> $Snoo
         </h1>
+        {/* Eligibility Badge */}
+        {points >= 2000 && (
+          <span className="bg-green-500 text-white text-sm px-3 py-1 rounded-full ml-3">
+            Eligible for Rewards
+          </span>
+        )}
       </div>
 
-      {/* Progress Bar */}
-      <div className="mt-10 w-3/4 max-w-md">
-        <LinearProgress
-          variant="determinate"
-          value={progress}
-          color="success"
-          sx={{ height: 12, borderRadius: 10 }}
-        />
-        <p className="text-gray-400 text-xs mt-2">
-           {points.toLocaleString()} / {nextMilestone.toLocaleString()} Snoocoins
-        </p>
-      </div>
+     
 
       {/* Error Message */}
       {isError && (
